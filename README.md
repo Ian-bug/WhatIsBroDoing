@@ -60,7 +60,3 @@ app_names = {
     "process_name.exe": "Display Name"
 }
 ```
-
-## Contributing
-
-Feel free to open issues or submit pull requests if you have any improvements or suggestions.
