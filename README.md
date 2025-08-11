@@ -1,30 +1,70 @@
 # What Is Bro Doing
 
-一個使用 Discord Rich Presence 顯示當前正在使用應用程式的工具。
+A Discord Rich Presence tool that displays your currently active application.
 
-## 功能
+## Features
 
-- 即時顯示當前使用的應用程式
-- 可自訂顯示文字
-- 支援應用程式名稱對照表
-- 可動態編輯應用程式清單
+- Real-time display of current active application
+- Customizable display text
+- Application name mapping support
+- Dynamic application list editing
 
-## 使用方法
+## Requirements
 
-1. 安裝必要套件：
+- Python 3.6+
+- Discord desktop client
+- Required Python packages:
+  - pypresence
+  - pygetwindow
+  - psutil
+  - pywin32
+
+## Installation
+
+1. Clone the repository:
+```bash
+git clone https://github.com/Ian-bug/WhatIsBroDoing.git
+cd WhatIsBroDoing
+```
+
+2. Install required packages:
 ```bash
 pip install pypresence pygetwindow psutil pywin32
 ```
 
-2. 執行程式：
+## Usage
+
+1. Run the program:
 ```bash
 python main.py
 ```
 
-3. 選擇模式：
-   - 0: 開始監控
-   - 1: 編輯應用程式清單
+2. Choose mode:
+   - Enter `0` to start monitoring
+   - Enter `1` to edit application list
 
-## 設定
+3. If starting monitor mode:
+   - Enter custom details text (or press Enter for default "bro is doing")
+   - The program will start displaying your active applications in Discord
 
-在 `applist.py` 中可以自定義應用程式的顯示名稱。
+4. If editing application list:
+   - Enter process name (e.g., "chrome.exe")
+   - Enter display name (e.g., "Google Chrome")
+   - The program will update the application list accordingly
+
+## Configuration
+
+You can customize application display names in `applist.py`. The format is:
+```python
+app_names = {
+    "process_name.exe": "Display Name"
+}
+```
+
+## License
+
+MIT License
+
+## Contributing
+
+Feel free to open issues or submit pull requests if you have any improvements or suggestions.
