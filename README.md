@@ -11,7 +11,7 @@ A Discord Rich Presence tool that displays your currently active application.
 
 ## Requirements
 
-- Python 3.6+
+- Python 3.12+
 - Discord desktop client
 - Required Python packages:
   - pypresence
