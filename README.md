@@ -61,10 +61,6 @@ app_names = {
 }
 ```
 
-## License
-
-MIT License
-
 ## Contributing
 
 Feel free to open issues or submit pull requests if you have any improvements or suggestions.
