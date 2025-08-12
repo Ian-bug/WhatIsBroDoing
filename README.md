@@ -2,6 +2,8 @@
 
 A Discord Rich Presence tool that displays your currently active application.
 
+![Discord Rich Presence Preview](preview.png)
+
 ## Features
 
 - Real-time display of current active application
