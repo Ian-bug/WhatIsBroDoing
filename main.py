@@ -76,6 +76,8 @@ RPC = Presence(client_id)
 RPC.connect()
 
 start_time = int(time.time())  # 啟動時記錄
+RPC.update(buttons=[{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]) 
+# https://qwertyquerty.github.io/pypresence/html/doc/presence.html :nerd:
 
 last_procname = None
 
@@ -101,10 +103,11 @@ while True:
             pid = None
         if procname != last_procname:
             print("switching to:", display_name)
+            buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
             if pid is not None and isinstance(pid, int):
-                RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time)
+                RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time, buttons=buttons)
             else:
-                RPC.update(details=details + ": ", state=display_name, start=start_time)
+                RPC.update(details=details + ": ", state=display_name, start=start_time, buttons=buttons)
             last_procname = procname
     except Exception as e:
         print(e)
