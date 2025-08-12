@@ -1,3 +1,22 @@
+# Python build files
 __pycache__/
-*.pyc
+*.py[cod]
+*$py.class
+*.so
+
+# Distribution/packaging
+dist/
+build/
+*.egg-info/
+*.exe
+*.spec
+main.dist/
+
+# IDE specific files
+.vscode/
+.idea/
+
+# Environment
 .env
+venv/
+ENV/
