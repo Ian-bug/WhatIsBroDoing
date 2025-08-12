@@ -1,3 +1,9 @@
+"""
+MIT License
+Copyright (c) 2024 Ian-bug
+See LICENSE file for details.
+"""
+
 import time
 from pypresence import Presence
 import pygetwindow as gw
