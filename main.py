@@ -12,6 +12,30 @@ import win32process
 import win32gui
 from applist import app_names  # 導入應用程式對照表
 import os
+import signal
+import sys 
+import logging
+
+    
+log_dir = "logs"
+if not os.path.exists(log_dir):
+    os.makedirs(log_dir)
+
+logging.basicConfig(
+    level=logging.info,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler(os.path.join(log_dir, "app.log")),
+        logging.StreamHandler()
+    ]
+)
+
+def signal_handler(sig, frame):
+    print("\n Exiting What Is Bro Doing")
+    RPC.close
+    sys.exit(0)
+
+signal.signal(signal.SIGINT, signal_handler)
 
 start_opinion = input("start or edit applist? (0/1): ")
 if start_opinion == "1":
