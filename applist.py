@@ -12,4 +12,5 @@ app_names = {
     "Telegram.exe": "Telegram",
     "taskmgr.exe": "Task Manager",
     'RobloxPlayerBeta.exe': 'Roblox',
+    "WhatIsBroDoing.exe": "What Is Bro Doing"
 }
