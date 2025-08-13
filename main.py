@@ -15,6 +15,7 @@ import os
 import signal
 import sys 
 import logging
+import threading 
 
     
 log_dir = "logs"
@@ -37,25 +38,26 @@ def signal_handler(sig, frame):
 
 signal.signal(signal.SIGINT, signal_handler)
 
-start_opinion = input("start or edit applist? (0/1): ")
-if start_opinion == "1":
+# start_opinion = input("start or edit applist? (0/1): ")
+# if start_opinion == "1":
+def applistedit():
     if os.path.exists("applist.py"):
         with open("applist.py", "r", encoding="utf-8") as f:
             current_list = f.read()
         print("Current applist content:")
         print(current_list)
-        
+
         process_name = input("Enter process name (example: chrome.exe): ")
-        if not process_name:
-            print("No process name entered. Exiting.")
-            exit()
-            
-        # Check if process name already exists
+    if not process_name:
+        print("No process name entered. Exiting.")
+        exit()
+        
+    # Check if process name already exists
         if f"'{process_name}'" in current_list:
             override = input("This process already exists. Override? (y/n): ")
-            if override.lower() != 'y':
-                print("Operation cancelled.")
-            exit()
+        if override.lower() != 'y':
+            print("Operation cancelled.")
+        exit()
         
         display_name = input("Enter display name (example: Google Chrome): ")
         if not display_name:
@@ -100,14 +102,29 @@ if start_opinion == "1":
         print("applist.py not found")
         exit()
 
-client_id = "1404326169888690296"
-
+client_id = "1404326169888690296" 
 RPC = Presence(client_id)
 RPC.connect()
-
 start_time = int(time.time())  # 啟動時記錄
 RPC.update(buttons=[{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]) 
 # https://qwertyquerty.github.io/pypresence/html/doc/presence.html :nerd:
+
+def handle_commands():
+    global details, start_time, last_procname, correct_status
+    
+    while True:
+        command = input("> ").strip().lower()
+        if command == "afk":
+            correct_status = "afk"
+        elif command == "normal":  # main_update
+            correct_status = "normal"
+        elif command == "help":
+            print("Available commands:")
+            print("  afk   - Set status to AFK")
+            print("  normal - Set status to normal")
+            print("  help  - Show this help message")
+        else:
+            print(f"what is {command}??? check help bro")
 
 last_procname = None
 
@@ -117,28 +134,29 @@ if details_input == "":
 else:
     details = details_input
 
-while True:
-    try:
-        win = gw.getActiveWindow()
-        if win:
-            hwnd = win._hWnd
-            tid, pid = win32process.GetWindowThreadProcessId(hwnd)
-            proc = psutil.Process(pid)
-            procname = proc.name()
-            # 檢查程式是否在對照表中，如果在則使用對應的名稱
-            display_name = app_names.get(procname, procname)
-        else:
-            procname = "unknown"
-            display_name = procname
-            pid = None
-        if procname != last_procname:
-            print("switching to:", display_name)
-            buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
-            if pid is not None and isinstance(pid, int):
-                RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time, buttons=buttons)
+def main_update():
+    while True:
+        try:
+            win = gw.getActiveWindow()
+            if win:
+                hwnd = win._hWnd
+                tid, pid = win32process.GetWindowThreadProcessId(hwnd)
+                proc = psutil.Process(pid)
+                procname = proc.name()
+                # 檢查程式是否在對照表中，如果在則使用對應的名稱
+                display_name = app_names.get(procname, procname)
+            else:
+                procname = "unknown"
+                display_name = procname
+                pid = None
+            if procname != last_procname:
+                print("switching to:", display_name)
+                buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
+                if pid is not None and isinstance(pid, int):
+                    RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time, buttons=buttons)
             else:
                 RPC.update(details=details + ": ", state=display_name, start=start_time, buttons=buttons)
             last_procname = procname
-    except Exception as e:
-        print(e)
-    time.sleep(1)
+        except Exception as e:
+            print(e)
+        time.sleep(1)
