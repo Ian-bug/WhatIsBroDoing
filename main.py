@@ -23,7 +23,7 @@ if not os.path.exists(log_dir):
     os.makedirs(log_dir)
 
 logging.basicConfig(
-    level=logging.ERROR,
+    level=logging.INFO,
     format='%(asctime)s - %(levelname)s - %(message)s',
     handlers=[
         logging.FileHandler(os.path.join(log_dir, "app.log")),
@@ -33,7 +33,7 @@ logging.basicConfig(
 
 def signal_handler(sig, frame):
     print("\n Exiting What Is Bro Doing")
-    RPC.close
+    RPC.close()
     sys.exit(0)
 
 signal.signal(signal.SIGINT, signal_handler)
@@ -48,17 +48,17 @@ def applistedit():
         print(current_list)
 
         process_name = input("Enter process name (example: chrome.exe): ")
-    if not process_name:
-        print("No process name entered. Exiting.")
-        exit()
-        
-    # Check if process name already exists
-        if f"'{process_name}'" in current_list:
+        if not process_name:
+            print("No process name entered. Exiting.")
+            exit()
+            
+        # Check if process name already exists
+        if process_name and f"'{process_name}'" in current_list:
             override = input("This process already exists. Override? (y/n): ")
-        if override.lower() != 'y':
-            print("Operation cancelled.")
-        exit()
-        
+            if override.lower() != 'y':
+                print("Operation cancelled.")
+                exit()
+            
         display_name = input("Enter display name (example: Google Chrome): ")
         if not display_name:
             print("No display name entered. Exiting.")
@@ -127,6 +127,7 @@ def handle_commands():
             print(f"what is {command}??? check help bro")
 
 last_procname = None
+correct_status = "normal"  # Initialize correct_status
 
 details_input = input("type details you want (if empty, defaults to 'bro is doing'): ")
 if details_input == "":
@@ -135,6 +136,7 @@ else:
     details = details_input
 
 def main_update():
+    global last_procname, correct_status, details, start_time, RPC
     while True:
         try:
             win = gw.getActiveWindow()
@@ -149,14 +151,45 @@ def main_update():
                 procname = "unknown"
                 display_name = procname
                 pid = None
-            if procname != last_procname:
-                print("switching to:", display_name)
-                buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
-                if pid is not None and isinstance(pid, int):
-                    RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time, buttons=buttons)
-            else:
-                RPC.update(details=details + ": ", state=display_name, start=start_time, buttons=buttons)
+            if correct_status == "normal":
+                if procname != last_procname:
+                    print("switching to:", display_name)
+                    buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
+                    if pid is not None and isinstance(pid, int):
+                        RPC.update(details=details + ": ", state=display_name, pid=pid, start=start_time, buttons=buttons)
+            elif correct_status == "afk":
+                if procname != last_procname:
+                    print("switching to:", display_name)
+                    buttons = [{"label": "Get What Is Bro Doing", "url": "https://github.com/Ian-bug/WhatIsBroDoing"}]
+                    if pid is not None and isinstance(pid, int):
+                        RPC.update(details="bro is afking in: ", state=display_name, pid=pid, start=start_time, buttons=buttons)
+                else:
+                    RPC.update(details=details + ": ", state=display_name, start=start_time, buttons=buttons)
             last_procname = procname
         except Exception as e:
             print(e)
+        
+
+if __name__ == "__main__":
+    start_opinion = input("start or edit applist? (0/1): ")
+    if start_opinion == "1":
+        applistedit()
+    
+
+
+command_thread = threading.Thread(target=handle_commands)
+command_thread.daemon = True
+main_thread = threading.Thread(target=main_update)
+main_thread.daemon = True
+
+main_thread.start()
+command_thread.start()
+
+print("started. do /help to view command")
+try:
+    while True:
         time.sleep(1)
+except KeyboardInterrupt:
+    print("Exiting...")
+    RPC.close()
+    sys.exit(0)
