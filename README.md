@@ -10,6 +10,7 @@ A Discord Rich Presence tool that displays your currently active application.
 - Customizable display text
 - Application name mapping support
 - Dynamic application list editing
+- Status switch 
 
 ## Requirements
 
